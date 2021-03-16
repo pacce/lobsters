@@ -1,10 +1,9 @@
 import axios from 'axios';
-import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Platform, StatusBar, StyleSheet, Text, View } from 'react-native';
 
 export default function App() {
-    const [entries, setEntries] = useState([{key: 'a'}, {key: 'b'}]);
+    const [entries, setEntries] = useState([]);
     useEffect(() => {
         axios.get('https://lobste.rs/hottest.json')
             .then(xs => setEntries(
@@ -30,5 +29,6 @@ const styles = StyleSheet.create({
         backgroundColor : '#fafafa',
         alignItems      : 'center',
         justifyContent  : 'center',
+        paddingTop      : Platform.OS === 'android' ? StatusBar.currentHeight : 0
     },
 });
