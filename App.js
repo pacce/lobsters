@@ -1,9 +1,17 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import { FlatList, Platform, StatusBar, StyleSheet, Text, View } from 'react-native';
+import {
+    FlatList
+    , Linking
+    , Platform
+    , StatusBar
+    , StyleSheet
+    , Text
+    , View
+} from 'react-native';
 import 'react-native-url-polyfill/auto';
 
-const Comments = ({entry}) => {
+const Comment = ({comment}) => {
     const renderComments = (count) => {
         switch(count) {
             case 0  : return "no comments";
@@ -11,14 +19,21 @@ const Comments = ({entry}) => {
             default : return count + " comments";
         }
     };
-    return <Text>{renderComments(entry.comments)}</Text>;
+    return <Text>{renderComments(comment.count)}</Text>;
+};
+
+const Story = ({story}) => {
+    const open = (url) => Linking.openURL(url);
+    return <Text style={styles.story} onPress={() => open(story.url)}>{story.title}</Text>;
 };
 
 const Entry = ({entry}) => (
     <View style={styles.item}>
-        <Text style={styles.storylink}>{entry.title}</Text>
+        <Story story={entry.story}/>
         <Text style={styles.information}>
-            {entry.username} | {entry.hostname} | <Comments entry={entry}/>
+            {entry.username}
+            {" | "} {entry.hostname}
+            {" | "} <Comment comment={entry.comments}/>
         </Text>
     </View>
 );
@@ -30,13 +45,14 @@ export default function App() {
             .then(xs => setEntries(
                 xs.data.map(function(x) {
                     let domain = (new URL(x.url));
-                    console.log(x);
+                    let story       = {title: x.title, url: x.url};
+                    let comments    = {count: x.comment_count, url: x.comments_url};
                     return {
                         key: x.short_id
-                        , title: x.title
-                        , hostname: domain.hostname
-                        , username: x.submitter_user.username
-                        , comments: x.comment_count
+                        , story     : story
+                        , hostname  : domain.hostname
+                        , username  : x.submitter_user.username
+                        , comments  : comments
                     };
                 })
             ))
@@ -65,7 +81,7 @@ const styles = StyleSheet.create({
         paddingRight    : 10,
         paddingBottom   : 10,
     },
-    storylink: {
+    story: {
         fontFamily  : 'sans-serif',
         fontSize    : 14,
     },
