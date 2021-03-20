@@ -7,6 +7,7 @@ import {
     , StatusBar
     , StyleSheet
     , Text
+    , TouchableOpacity
     , View
 } from 'react-native';
 import 'react-native-url-polyfill/auto';
@@ -22,10 +23,11 @@ const Comment = ({comment}) => {
     return <Text>{renderComments(comment.count)}</Text>;
 };
 
-const Story = ({story}) => {
-    const open = (url) => Linking.openURL(url);
-    return <Text style={styles.story} onPress={() => open(story.url)}>{story.title}</Text>;
-};
+const Story = ({story}) => (
+    <TouchableOpacity onPress={() => Linking.openURL(story.url)}>
+        <Text style={styles.story}>{story.title}</Text>
+    </TouchableOpacity>
+);
 
 const Entry = ({entry}) => (
     <View style={styles.item}>
