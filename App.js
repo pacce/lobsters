@@ -60,7 +60,10 @@ const styles = StyleSheet.create({
         backgroundColor : '#fafafa',
         alignItems      : 'center',
         justifyContent  : 'center',
-        paddingTop      : Platform.OS === 'android' ? StatusBar.currentHeight : 0
+        paddingTop      : Platform.OS === 'android' ? StatusBar.currentHeight + 10 : 10,
+        paddingLeft     : 10,
+        paddingRight    : 10,
+        paddingBottom   : 10,
     },
     storylink: {
         fontFamily  : 'sans-serif',
