@@ -46,13 +46,17 @@ export default function App() {
         axios.get('https://lobste.rs/hottest.json')
             .then(xs => setEntries(
                 xs.data.map(function(x) {
-                    let domain = (new URL(x.url));
+                    let hostname = '';
+                    if (x.url != '') {
+                        let domain  = (new URL(x.url));
+                        hostname    = domain.hostname;
+                    }
                     let story       = {title: x.title, url: x.url};
                     let comments    = {count: x.comment_count, url: x.comments_url};
                     return {
                         key: x.short_id
                         , story     : story
-                        , hostname  : domain.hostname
+                        , hostname  : hostname
                         , username  : x.submitter_user.username
                         , comments  : comments
                     };
