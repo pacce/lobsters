@@ -41,28 +41,28 @@ const Entry = ({entry}) => (
     </View>
 );
 
+const processEntry = (x) => {
+    let hostname = '';
+    if (x.url != '') {
+        let domain  = (new URL(x.url));
+        hostname    = domain.hostname;
+    }
+    let story       = {title: x.title, url: x.url};
+    let comments    = {count: x.comment_count, url: x.comments_url};
+    return {
+        key         : x.short_id
+        , story     : story
+        , hostname  : hostname
+        , username  : x.submitter_user.username
+        , comments  : comments
+    };
+};
+
 const Hottest = () => {
     const [entries, setEntries] = useState([]);
     useEffect(() => {
         axios.get('https://lobste.rs/hottest.json')
-            .then(xs => setEntries(
-                xs.data.map(function(x) {
-                    let hostname = '';
-                    if (x.url != '') {
-                        let domain  = (new URL(x.url));
-                        hostname    = domain.hostname;
-                    }
-                    let story       = {title: x.title, url: x.url};
-                    let comments    = {count: x.comment_count, url: x.comments_url};
-                    return {
-                        key         : x.short_id
-                        , story     : story
-                        , hostname  : hostname
-                        , username  : x.submitter_user.username
-                        , comments  : comments
-                    };
-                })
-            ))
+            .then(es => setEntries(es.data.map(processEntry)))
             .catch(r => console.log(r))
             ;
     }, []);
@@ -79,24 +79,7 @@ const Newest = () => {
     const [entries, setEntries] = useState([]);
     useEffect(() => {
         axios.get('https://lobste.rs/newest.json')
-            .then(xs => setEntries(
-                xs.data.map(function(x) {
-                    let hostname = '';
-                    if (x.url != '') {
-                        let domain  = (new URL(x.url));
-                        hostname    = domain.hostname;
-                    }
-                    let story       = {title: x.title, url: x.url};
-                    let comments    = {count: x.comment_count, url: x.comments_url};
-                    return {
-                        key         : x.short_id
-                        , story     : story
-                        , hostname  : hostname
-                        , username  : x.submitter_user.username
-                        , comments  : comments
-                    };
-                })
-            ))
+            .then(es => setEntries(es.data.map(processEntry)))
             .catch(r => console.log(r))
             ;
     }, []);
