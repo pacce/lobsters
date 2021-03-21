@@ -10,6 +10,7 @@ import {
     , TouchableOpacity
     , View
 } from 'react-native';
+import { Link, NativeRouter, Route, Switch } from 'react-router-native';
 import 'react-native-url-polyfill/auto';
 
 const Comment = ({comment}) => {
@@ -40,7 +41,7 @@ const Entry = ({entry}) => (
     </View>
 );
 
-export default function App() {
+const Hottest = () => {
     const [entries, setEntries] = useState([]);
     useEffect(() => {
         axios.get('https://lobste.rs/hottest.json')
@@ -54,7 +55,7 @@ export default function App() {
                     let story       = {title: x.title, url: x.url};
                     let comments    = {count: x.comment_count, url: x.comments_url};
                     return {
-                        key: x.short_id
+                        key         : x.short_id
                         , story     : story
                         , hostname  : hostname
                         , username  : x.submitter_user.username
@@ -67,12 +68,62 @@ export default function App() {
     }, []);
 
     return (
-        <View style={styles.container}>
         <FlatList
             data        = {entries}
             renderItem  = {({item}) => <Entry entry={item}/>}
         />
+    );
+};
+
+const Newest = () => {
+    const [entries, setEntries] = useState([]);
+    useEffect(() => {
+        axios.get('https://lobste.rs/newest.json')
+            .then(xs => setEntries(
+                xs.data.map(function(x) {
+                    let hostname = '';
+                    if (x.url != '') {
+                        let domain  = (new URL(x.url));
+                        hostname    = domain.hostname;
+                    }
+                    let story       = {title: x.title, url: x.url};
+                    let comments    = {count: x.comment_count, url: x.comments_url};
+                    return {
+                        key         : x.short_id
+                        , story     : story
+                        , hostname  : hostname
+                        , username  : x.submitter_user.username
+                        , comments  : comments
+                    };
+                })
+            ))
+            .catch(r => console.log(r))
+            ;
+    }, []);
+
+    return (
+        <FlatList
+            data        = {entries}
+            renderItem  = {({item}) => <Entry entry={item}/>}
+        />
+    );
+};
+
+export default function App() {
+    return (
+        <NativeRouter>
+        <View style={styles.container}>
+            <View>
+                <Link to="/"><Text>Hottest</Text></Link>
+                <Link to="/newest"><Text>Newest</Text></Link>
+            </View>
+
+            <Switch>
+                <Route exact path="/" component={Hottest}/>
+                <Route path="/newest" component={Newest}/>
+            </Switch>
         </View>
+        </NativeRouter>
     );
 }
 
