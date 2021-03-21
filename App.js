@@ -68,10 +68,12 @@ const Hottest = () => {
     }, []);
 
     return (
+        <View style={styles.content}>
         <FlatList
             data        = {entries}
             renderItem  = {({item}) => <Entry entry={item}/>}
         />
+        </View>
     );
 };
 
@@ -85,10 +87,12 @@ const Newest = () => {
     }, []);
 
     return (
+        <View style={styles.content}>
         <FlatList
             data        = {entries}
             renderItem  = {({item}) => <Entry entry={item}/>}
         />
+        </View>
     );
 };
 
@@ -96,9 +100,13 @@ export default function App() {
     return (
         <NativeRouter>
         <View style={styles.container}>
-            <View>
-                <Link to="/"><Text>Hottest</Text></Link>
-                <Link to="/newest"><Text>Newest</Text></Link>
+            <View style={styles.nav}>
+                <Link style={styles.navItem} to="/">
+                    <Text style={styles.navText}>Hottest</Text>
+                </Link>
+                <Link style={styles.navItem} to="/newest">
+                    <Text style={styles.navText}>Newest</Text>
+                </Link>
             </View>
 
             <Switch>
@@ -116,18 +124,35 @@ const styles = StyleSheet.create({
         backgroundColor : '#fafafa',
         alignItems      : 'center',
         justifyContent  : 'center',
-        paddingTop      : Platform.OS === 'android' ? StatusBar.currentHeight + 10 : 10,
+        paddingTop      : StatusBar.currentHeight,
+    },
+    content: {
+        flex            :  2,
+        paddingTop      :  0,
         paddingLeft     : 10,
         paddingRight    : 10,
         paddingBottom   : 10,
+    },
+    information: {
+        fontFamily  : 'sans-serif',
+        fontSize    : 10,
+        color       : '#828282'
+    },
+    nav: {
+        backgroundColor : '#500000',
+        flexDirection   : 'row',
+        justifyContent  : 'space-around',
+    },
+    navItem: {
+        alignItems  : 'center',
+        flex        : 1,
+        padding     : 10,
+    },
+    navText: {
+        color: '#ffffff',
     },
     story: {
         fontFamily  : 'sans-serif',
         fontSize    : 14,
     },
-    information: {
-        fontFamily  : 'sans-serif',
-        fontSize    : 10,
-        color       : "#828282"
-    }
 });
