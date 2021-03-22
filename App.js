@@ -21,7 +21,12 @@ const Comment = ({comment}) => {
             default : return count + " comments";
         }
     };
-    return <Text>{renderComments(comment.count)}</Text>;
+    let path = (new URL(comment.url));
+    return (
+        <Link to={`${path.pathname}`}>
+            <Text>{renderComments(comment.count)}</Text>
+        </Link>
+    );
 };
 
 const Story = ({story}) => (
@@ -96,6 +101,30 @@ const Newest = () => {
     );
 };
 
+const PostComment = ({item}) => (
+    <Text style={styles.postComment}>{item.comment}</Text>
+);
+
+const Post = ({match}) => {
+    const [comments, setComments] = useState([]);
+    useEffect(() => {
+        axios.get(`https://lobste.rs/${match.url}.json`)
+            .then(es => setComments(es.data.comments))
+            .catch(r => console.log(r))
+            ;
+    }, []);
+
+    return (
+        <View style={styles.content}>
+        <FlatList
+            data            = {comments}
+            renderItem      = {({item}) => <PostComment item={item}/>}
+            keyExtractor    = {(item)   => item.short_url}
+            />
+        </View>
+    );
+};
+
 export default function App() {
     return (
         <NativeRouter>
@@ -112,6 +141,7 @@ export default function App() {
             <Switch>
                 <Route exact path="/" component={Hottest}/>
                 <Route path="/newest" component={Newest}/>
+                <Route path="/s/:id" component={Post}/>
             </Switch>
         </View>
         </NativeRouter>
@@ -150,6 +180,9 @@ const styles = StyleSheet.create({
     },
     navText: {
         color: '#ffffff',
+    },
+    postComment: {
+        color: '#828282',
     },
     story: {
         fontFamily  : 'sans-serif',
